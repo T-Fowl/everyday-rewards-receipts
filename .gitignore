@@ -1,0 +1,7 @@
+.idea
+
+/target
+/receipts
+
+# Will contain access PII
+http-client.private.env.json
