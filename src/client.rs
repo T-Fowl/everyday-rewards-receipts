@@ -1,5 +1,6 @@
-use std::fmt::{Display, Formatter};
 use std::path::Path;
+
+use thiserror::Error;
 
 use reqwest::blocking::Client;
 use reqwest::header::{AUTHORIZATION, CONTENT_TYPE, HeaderMap, USER_AGENT};
@@ -27,45 +28,22 @@ pub struct EverydayRewardsClient {
     client: Client,
 }
 
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum EverydayRewardsError {
+    #[error("everydayrewards api responded with the following errors: {0:?}")]
     ApiError(Vec<ApiError>),
-    NetworkError(reqwest::Error),
-    ParseError(serde_json::Error),
-    IoError(std::io::Error),
+
+    #[error("network error")]
+    NetworkError(#[from] reqwest::Error),
+
+    #[error("parsing error")]
+    ParseError(#[from] serde_json::Error),
+
+    #[error("io error")]
+    IoError(#[from] std::io::Error),
+
+    #[error("unknown error: {0}")]
     UnknownError(String),
-}
-
-impl Display for EverydayRewardsError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}", self)
-    }
-}
-
-impl std::error::Error for EverydayRewardsError {}
-
-impl From<std::io::Error> for EverydayRewardsError {
-    fn from(error: std::io::Error) -> Self {
-        EverydayRewardsError::IoError(error)
-    }
-}
-
-impl From<serde_json::Error> for EverydayRewardsError {
-    fn from(error: serde_json::Error) -> Self {
-        EverydayRewardsError::ParseError(error)
-    }
-}
-
-impl From<reqwest::Error> for EverydayRewardsError {
-    fn from(error: reqwest::Error) -> Self {
-        EverydayRewardsError::NetworkError(error)
-    }
-}
-
-impl From<Vec<ApiError>> for EverydayRewardsError {
-    fn from(errors: Vec<ApiError>) -> Self {
-        EverydayRewardsError::ApiError(errors)
-    }
 }
 
 impl EverydayRewardsClient {
@@ -100,7 +78,7 @@ impl EverydayRewardsClient {
         let response = serde_json::from_str::<ApiResponse>(text.as_str())?;
 
         if let Some(errors) = response.errors {
-            return Err(EverydayRewardsError::from(errors));
+            return Err(EverydayRewardsError::ApiError(errors));
         }
 
         if let Some(data) = response.data {
@@ -122,7 +100,7 @@ impl EverydayRewardsClient {
         let response: ApiResponse = serde_json::from_str(text.as_str())?;
 
         if let Some(errors) = response.errors {
-            return Err(EverydayRewardsError::from(errors));
+            return Err(EverydayRewardsError::ApiError(errors));
         }
 
         if let Some(data) = response.data {
