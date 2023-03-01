@@ -57,16 +57,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     continue;
                 }
 
-                let receipt = client.transaction_details(item.receipt.receipt_id.as_str())?;
+                if let Some(item_receipt) = &item.receipt {
+                    let receipt = client.transaction_details(item_receipt.receipt_id.as_str())?;
 
-                println!("        {:?}", receipt.value);
+                    println!("        {:?}", receipt.value);
 
-                let url = receipt.value.receipt_details.download.url;
+                    let url = receipt.value.receipt_details.download.url;
 
-                println!("        Downloading...");
-                client.download_receipt(url.as_str(), pdf_path)?;
+                    println!("        Downloading...");
+                    client.download_receipt(url.as_str(), pdf_path)?;
 
-                std::fs::write(json_path, receipt.source)?;
+                    std::fs::write(json_path, receipt.source)?;
+                } else {
+                    println!("Skipping {} as there is no associated receipt.", item.id);
+                }
             }
         }
     }

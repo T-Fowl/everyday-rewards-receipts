@@ -46,7 +46,7 @@ pub struct RewardsActivityFeedGroup {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Item {
     pub id: String,
-    pub receipt: ItemReceipt,
+    pub receipt: Option<ItemReceipt>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
