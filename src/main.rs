@@ -48,19 +48,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             for item in group.items.iter().flatten() {
                 println!("    {:?}", item);
 
-                let path = path.join(&item.id);
-                let pdf_path = path.with_extension("pdf");
-                let json_path = path.with_extension("json");
-
-                if Path::exists(&pdf_path) && Path::exists(&json_path) {
-                    println!("        Skipping....");
-                    continue;
-                }
-
                 if let Some(item_receipt) = &item.receipt {
                     let receipt = client.transaction_details(item_receipt.receipt_id.as_str())?;
 
                     println!("        {:?}", receipt.value);
+
+
+                    let pdf_path = path.join(&receipt.value.receipt_details.download.filename);
+                    let json_path = pdf_path.with_extension("json");
+
+                    if Path::exists(&pdf_path) && Path::exists(&json_path) {
+                        println!("        Skipping....");
+                        continue;
+                    }
+
 
                     let url = receipt.value.receipt_details.download.url;
 
