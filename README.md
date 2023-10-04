@@ -5,6 +5,11 @@ Simple tool to download all receipts from [everyday rewards](https://www.woolwor
 This tool will download the pdf receipt as well as store the api response of the transaction alongside as json.  
 This sidecar file is useful as it contains the itemisation for the receipt - negating the need to strip text from the pdfs.
 
+## Installation
+
+If you are a Rust developer you can install from crates.io
+
+`cargo install everyday-rewards-receipts`
 
 
 ## Usage
