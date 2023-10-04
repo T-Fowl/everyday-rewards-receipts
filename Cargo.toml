@@ -1,7 +1,13 @@
 [package]
 name = "everyday-rewards-receipts"
 version = "0.1.0"
+authors = ["Thomas Fowler"]
 edition = "2021"
+description = "Command line tool to download all receipts from your everyday rewards account"
+readme = "README.md"
+homepage = "https://github.com/T-Fowl/everyday-rewards-receipts"
+repository = "https://github.com/T-Fowl/everyday-rewards-receipts"
+license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
