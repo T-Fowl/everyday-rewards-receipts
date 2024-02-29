@@ -9,38 +9,7 @@ Origin: https://www.woolworthsrewards.com.au
 Referer: https://www.woolworthsrewards.com.au/
 User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36
 
-query RewardsActivityFeed {
-  rtlRewardsActivityFeed(pageToken: "FIRST_PAGE") {
-    list {
-      groups {
-        ... on RewardsActivityFeedGroup {
-          id
-          title
-          items {
-            id
-            receipt {
-              receiptId
-            }
-          }
-        }
-      }
-      nextPageToken
-    }
-  }
-}
-
-### List out activities - Manual GraphQL
-POST https://apigee-prod.api-wr.com/wx/v1/bff/graphql
-Accept: application/json, text/plain, */*
-api-version: 2
-Authorization: Bearer {{token}}
-client_id: {{client_id}}
-Content-Type: application/json;charset=UTF-8
-Origin: https://www.woolworthsrewards.com.au
-Referer: https://www.woolworthsrewards.com.au/
-User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36
-
-{"query":"query RewardsActivityFeed { rtlRewardsActivityFeed(pageToken: \"FIRST_PAGE\") { list { groups { ... on RewardsActivityBanner { id iconUrl title message messageCta action { url type } onDismissCoachMark { text anchor } analytics { label } } ...on RewardsActivityFeedGroup { id title items { id displayDate description message displayValue displayValueHandling icon iconUrl transaction { origin amountAsDollars } highlights{ description value } receipt { receiptId } transactionType  } } }  nextPageToken } } }"}
+< ./src/RewardsActivityFeed.graphql
 
 ### Fetch receipt details
 POST https://api.woolworthsrewards.com.au/wx/v1/rewards/member/ereceipts/transactions/details

@@ -1,0 +1,60 @@
+query RewardsActivityFeed {
+  rtlRewardsActivityFeed(
+    pageToken: "FIRST_PAGE"
+    featureFlags: { activityBreakdown: true }
+  ) {
+    list {
+      groups {
+        ... on RewardsActivityBanner {
+          id
+          iconUrl
+          title
+          message
+          messageCta
+          action {
+            url
+            type
+          }
+          onDismissCoachMark {
+            text
+            anchor
+          }
+          analytics {
+            label
+          }
+        }
+        ... on RewardsActivityFeedGroup {
+          id
+          title
+          items {
+            id
+            displayDate
+            description
+            message
+            displayValue
+            displayValueHandling
+            icon
+            iconUrl
+            showChevron
+            activityDetailsId
+            transaction {
+              origin
+              amountAsDollars
+            }
+            highlights {
+              description
+              value
+              style
+              iconUrl
+            }
+            receipt(enableOnlineReceipt: true) {
+              receiptId
+            }
+            transactionType
+          }
+        }
+      }
+      nextPageToken
+    }
+  }
+}

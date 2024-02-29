@@ -4,6 +4,7 @@ use thiserror::Error;
 
 use reqwest::blocking::Client;
 use reqwest::header::{AUTHORIZATION, CONTENT_TYPE, HeaderMap, USER_AGENT};
+use serde_json::json;
 
 use crate::EverydayRewardsError::UnknownError;
 use crate::models::{ApiError, ApiResponse, ReceiptDetailsResponse, RewardsActivityFeedResponse, RtlRewardsActivity};
@@ -67,10 +68,16 @@ impl EverydayRewardsClient {
 
     pub fn rewards_activity_feed(&self, page_token: Option<&str>) -> Result<ValueWithSource<RewardsActivityFeedResponse>, EverydayRewardsError> {
         let page_token = page_token.unwrap_or("FIRST_PAGE");
-        let query = format!(r#"query RewardsActivityFeed {{ rtlRewardsActivityFeed(pageToken: \"{page_token}\") {{ list {{ groups {{ ... on RewardsActivityFeedGroup {{ id title items {{ id receipt {{ receiptId }} }} }} }} nextPageToken }} }} }}"#);
+
+        let query = include_str!("RewardsActivityFeed.graphql");
+        let query = query.replace("FIRST_PAGE", page_token);
+
+        let body = json!({
+            "query": query,
+        });
 
         let text = self.client.post("https://apigee-prod.api-wr.com/wx/v1/bff/graphql")
-            .body(format!("{{\"query\":\"{query}\"}}"))
+            .body(body.to_string())
             .header(CONTENT_TYPE, "application/json;charset=UTF-8")
             .send()?
             .text()?;
@@ -93,8 +100,12 @@ impl EverydayRewardsClient {
     }
 
     pub fn transaction_details(&self, receipt_key: &str) -> Result<ValueWithSource<ReceiptDetailsResponse>, EverydayRewardsError> {
+        let body = json!({
+            "receiptKey": receipt_key,
+        });
+
         let text = self.client.post("https://api.woolworthsrewards.com.au/wx/v1/rewards/member/ereceipts/transactions/details")
-            .body(format!("{{\"receiptKey\":\"{receipt_key}\"}}"))
+            .body(body.to_string())
             .header(CONTENT_TYPE, "application/json;charset=UTF-8").send()?.text()?;
 
         let response: ApiResponse = serde_json::from_str(text.as_str())?;
@@ -115,8 +126,12 @@ impl EverydayRewardsClient {
     }
 
     pub fn download_receipt<P: AsRef<Path>>(&self, download_url: &str, path: P) -> Result<(), EverydayRewardsError> {
+        let body = json!({
+            "downloadUrl": download_url,
+        });
+
         let request = self.client.post("https://api.woolworthsrewards.com.au/wx/v1/rewards/member/ereceipts/transactions/details/download")
-            .body(format!("{{\"downloadUrl\":\"{download_url}\"}}"))
+            .body(body.to_string())
             .header(CONTENT_TYPE, "application/json;charset=UTF-8");
 
         let response = request.send()?;
