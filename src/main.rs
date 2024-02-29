@@ -33,6 +33,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     if Path::exists(path.join("This_Month").as_path()) {
         std::fs::remove_dir_all(path.join("This_Month"))?;
     }
+    if Path::exists(path.join("Last_Month").as_path()) {
+        std::fs::remove_dir_all(path.join("Last_Month"))?;
+    }
 
 
     let iter = ActivityFeedIterator::create(&client);
