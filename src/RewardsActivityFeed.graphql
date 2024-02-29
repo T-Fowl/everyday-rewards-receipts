@@ -5,24 +5,6 @@ query RewardsActivityFeed {
   ) {
     list {
       groups {
-        ... on RewardsActivityBanner {
-          id
-          iconUrl
-          title
-          message
-          messageCta
-          action {
-            url
-            type
-          }
-          onDismissCoachMark {
-            text
-            anchor
-          }
-          analytics {
-            label
-          }
-        }
         ... on RewardsActivityFeedGroup {
           id
           title

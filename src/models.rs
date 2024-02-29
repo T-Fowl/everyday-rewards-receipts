@@ -46,7 +46,21 @@ pub struct RewardsActivityFeedGroup {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Item {
     pub id: String,
+    #[serde(rename = "displayDate")]
+    pub display_date: String,
+    pub description: String,
+    /// e.g. "woolworths"
+    pub icon: String,
+    #[serde(rename = "iconUrl")]
+    pub icon_url: String,
+    /// contains base64 json {receiptId,receiptSource,activityId}
+    #[serde(rename = "activityDetailsId")]
+    pub activity_details_id: String,
     pub receipt: Option<ItemReceipt>,
+
+    /// e.g. "purchase"
+    #[serde(rename = "transactionType")]
+    pub transaction_type: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
